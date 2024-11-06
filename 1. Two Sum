@@ -1,0 +1,75 @@
+1. Two Sum
+
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+
+You can return the answer in any order.
+
+ 
+
+Example 1:
+
+Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
+Example 2:
+
+Input: nums = [3,2,4], target = 6
+Output: [1,2]
+Example 3:
+
+Input: nums = [3,3], target = 6
+Output: [0,1]
+ 
+
+Constraints:
+
+2 <= nums.length <= 104
+-109 <= nums[i] <= 109
+-109 <= target <= 109
+Only one valid answer exists.
+ 
+
+Follow-up: Can you come up with an algorithm that is less than O(n2) time complexity?
+
+solution-
+
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+```
+Yahaan humne ek `Solution` class banayi hai aur uske andar ek function `twoSum` define kiya hai jo `nums` aur `target` ko parameters ke taur par leta hai.
+
+        for i in range(len(nums)):
+```
+Yahaan pe humne ek loop start kiya hai jo array ke har element ke liye chalega. `i` variable ke zariye hum array mein current index ko represent karte hain.
+
+            for j in range(i + 1, len(nums)):
+```
+Yahaan humne doosra nested loop start kiya hai jo `i+1` se start ho raha hai aur array ke last element tak chalega. Yeh isliye kiya gaya hai taake hum har element ke baad wale elements ke saath comparison kar saken aur kisi element ka khud ke saath sum na ho.
+
+                if nums[j] == target - nums[i]:
+```
+Is line mein hum check kar rahe hain ke agar `nums[j]` (second element) ka value `target - nums[i]` ke barabar hai, toh iska matlab hai ki `nums[i]` aur `nums[j]` ka sum `target` ke barabar ho raha hai. Agar yeh condition true hoti hai toh humein apna solution mil gaya.
+
+                    return [i, j]
+```
+Agar above condition satisfy ho gayi, toh hum `[i, j]` ko return karte hain, jo un do numbers ke indices hain jinka sum `target` ke equal hai.
+
+        # Return an empty list if no solution is found
+        return []
+```
+Yeh line technically kabhi execute nahi hogi kyunki question mein diya hai ke hamesha ek valid solution hoga. Lekin agar aise hi precaution ke taur par hum empty list return karte hain agar koi solution na mile.
+
+---
+
+**Follow-up Optimization**: Yeh solution ka time complexity \(O(n^2)\) hai kyunki do nested loops hain. Isko optimize karne ke liye hum ek dictionary (hashmap) use kar sakte hain jisme hum har element ka index store karenge, aur isse \(O(n)\) time complexity achieve kar sakte hain.
+
+
+  class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        for i in range(len(nums)):
+            for j in range(i + 1,len(nums)):
+                if nums[j] == target - nums[i]:
+                    return [i, j]
+        return []
