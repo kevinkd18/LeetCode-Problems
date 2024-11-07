@@ -1,0 +1,58 @@
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+
+Yahaan hum Solution class mein lengthOfLongestSubstring function define kar rahe hain jo s string ko parameter ke taur par leta hai.
+
+        char_set = set()
+
+Yahaan pe hum ek empty set char_set banate hain jo unique characters ko track karega jo current window (substring) mein hain.
+
+        left = 0
+        max_length = 0
+
+	•	left variable ko use karte hain taake sliding window ka starting point ko track kar saken.
+	•	max_length variable longest substring ka length store karega.
+
+        for right in range(len(s)):
+
+Yahaan pe hum ek loop chalate hain jo string s ke har character ke liye chalega aur right pointer ko update karega jo sliding window ka end point hai.
+
+            while s[right] in char_set:
+                char_set.remove(s[left])
+                left += 1
+
+Agar current character (s[right]) char_set mein pehle se exist karta hai (yaani repeating character hai), toh hum left pointer ko aage badhate hain aur char_set se s[left] character ko remove karte hain jab tak current character unique nahi ho jata. Yeh step ensure karta hai ke substring mein koi repeating character na ho.
+
+            char_set.add(s[right])
+
+Yahaan pe hum current character s[right] ko char_set mein add kar rahe hain taake unique characters ka track rakha ja sake.
+
+            max_length = max(max_length, right - left + 1)
+
+Ab hum longest substring ka length update karte hain. right - left + 1 current window ka length hai, aur max_length mein hum iska maximum value store karte hain.
+
+        return max_length
+
+Finally, longest substring ka length max_length return karte hain.
+
+Code
+
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        char_set = set()
+        left = 0
+        max_length = 0
+        
+        for right in range(len(s)):
+            while s[right] in char_set:
+                char_set.remove(s[left])
+                left += 1
+            char_set.add(s[right])
+            max_length = max(max_length, right - left + 1)
+        
+        return max_length
+
+Complexity Analysis:
+
+	•	Time Complexity: O(n), kyunki hum har character ko ek hi baar visit karte hain aur set mein insertion/removal average O(1) mein hota hai.
+	•	Space Complexity: O(k), jahan k distinct characters hain jo set char_set mein stored hote hain.
