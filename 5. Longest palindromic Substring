@@ -1,0 +1,89 @@
+Is problem mein humein ek string s di gayi hai, aur humein uska longest palindromic substring find karna hai. Palindrome woh substring hoti hai jo ulta aur seedha ek jaisi dikhti hai, jaise “aba”, “bb” etc.
+
+Example Explanation:
+
+	1.	Example 1:
+	•	Input: s = "babad"
+	•	Possible palindromic substrings: "bab", "aba"
+	•	Output: "bab" or "aba" (dono valid hain kyunki dono palindromic hain aur longest bhi hain)
+	2.	Example 2:
+	•	Input: s = "cbbd"
+	•	Longest palindromic substring: "bb"
+	•	Output: "bb"
+
+Constraints:
+
+	•	1 <= s.length <= 1000
+	•	String s mein sirf English letters aur digits hain.
+
+Code Explanation:
+
+Is code mein hum brute-force approach ka use kar rahe hain jismein har possible substring ko check kiya jata hai ki kya woh palindrome hai ya nahi.
+
+Code
+
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        def check(i, j):
+            left = i
+            right = j - 1
+
+            # Check if the substring from i to j is a palindrome
+            while left < right:
+                if s[left] != s[right]:
+                    return False
+                left += 1
+                right -= 1
+
+            return True
+
+        # Try all possible substring lengths from the full length down to 1
+        for length in range(len(s), 0, -1):
+            for start in range(len(s) - length + 1):
+                # Check if the substring starting at 'start' of length 'length' is a palindrome
+                if check(start, start + length):
+                    return s[start : start + length]
+
+        return ""
+
+Explanation of the Code:
+
+	1.	Inner Function check:
+
+def check(i, j):
+    left = i
+    right = j - 1
+
+    while left < right:
+        if s[left] != s[right]:
+            return False
+        left += 1
+        right -= 1
+
+    return True
+
+	•	check function check karta hai ki substring s[i:j] palindrome hai ya nahi.
+	•	Yeh left aur right pointers ka use karta hai aur jab tak characters match nahi hote ya toh pointers overlap nahi hote, tab tak loop chalata hai.
+
+	2.	Outer Loop for Length:
+
+for length in range(len(s), 0, -1):
+    for start in range(len(s) - length + 1):
+        if check(start, start + length):
+            return s[start : start + length]
+
+	•	Yeh loop string s mein har possible substring length ke liye check karta hai, longest se shortest tak.
+	•	Har length ke liye, yeh check karta hai saare possible substrings ko us length mein aur check function ke through verify karta hai ki kya woh palindrome hai.
+
+	3.	Return Result:
+	•	Agar palindrome milta hai toh return s[start : start + length] kar ke result return ho jata hai.
+	•	Agar koi palindrome nahi milta (although guaranteed hai ki koi na koi palindrome milega), toh yeh "" return karega.
+
+Complexity Analysis:
+
+	•	Time Complexity: ￼ kyunki har substring ko check karne mein ￼ lagta hai aur palindrome check karna ￼ mein hota hai.
+	•	Space Complexity: ￼ kyunki hum constant space use kar rahe hain (sirf variables aur function calls).
+
+Optimized Approach:
+
+Brute-force ka time complexity high hai, isliye isko optimize karne ke liye hum Dynamic Programming ya Expand Around Center technique ka use kar sakte hain jo isko ￼ mein solve kar sakte hain.
