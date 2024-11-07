@@ -1,0 +1,96 @@
+Approach:
+
+Hum binary search ka use karenge nums1 aur nums2 arrays ko half mein divide karne ke liye, taake hum left aur right halves ka balance maintain kar saken.
+
+	1.	Pehle ensure karte hain ki nums1 chota array ho (m <= n). Yeh important hai kyunki binary search humesha chote array pe perform karna chahiye.
+	2.	Phir binary search se nums1 aur nums2 ko is tarike se divide karte hain ki left half aur right half balanced ho.
+	3.	Left half ka largest element aur right half ka smallest element median ko define karega.
+
+Code
+
+class Solution:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        # Ensure nums1 is the smaller array
+        if len(nums1) > len(nums2):
+            nums1, nums2 = nums2, nums1
+            
+        m, n = len(nums1), len(nums2)
+        left, right = 0, m
+        half_len = (m + n + 1) // 2
+        
+        while left <= right:
+            i = (left + right) // 2
+            j = half_len - i
+            
+            # Check boundaries
+            if i < m and nums1[i] < nums2[j - 1]:
+                left = i + 1
+            elif i > 0 and nums1[i - 1] > nums2[j]:
+                right = i - 1
+            else:
+                # Found correct partition
+                if i == 0: max_of_left = nums2[j - 1]
+                elif j == 0: max_of_left = nums1[i - 1]
+                else: max_of_left = max(nums1[i - 1], nums2[j - 1])
+                
+                if (m + n) % 2 == 1:
+                    return max_of_left
+                
+                if i == m: min_of_right = nums2[j]
+                elif j == n: min_of_right = nums1[i]
+                else: min_of_right = min(nums1[i], nums2[j])
+                
+                return (max_of_left + min_of_right) / 2.0
+
+Explanation of the Code:
+
+	1.	Ensure Small Array:
+
+if len(nums1) > len(nums2):
+    nums1, nums2 = nums2, nums1
+
+Yeh step ensure karta hai ki nums1 smaller array hai, taake binary search efficiently chote array pe apply ho sake.
+
+	2.	Binary Search Setup:
+
+m, n = len(nums1), len(nums2)
+left, right = 0, m
+half_len = (m + n + 1) // 2
+
+m aur n mein nums1 aur nums2 ke lengths store hote hain. half_len ko hum isliye define karte hain taake arrays ko left aur right parts mein divide kar sake.
+
+	3.	Binary Search Loop:
+
+while left <= right:
+    i = (left + right) // 2
+    j = half_len - i
+
+Yeh loop tab tak chalta hai jab tak left pointer right pointer ko cross na kar le. i aur j se hum nums1 aur nums2 ke partitions ko define karte hain.
+
+	4.	Adjusting Partitions:
+
+if i < m and nums1[i] < nums2[j - 1]:
+    left = i + 1
+elif i > 0 and nums1[i - 1] > nums2[j]:
+    right = i - 1
+
+Agar nums1 aur nums2 ke elements left aur right partitions mein balanced nahi hain, toh left aur right ko adjust karte hain.
+
+	5.	Finding Median:
+
+if i == 0: max_of_left = nums2[j - 1]
+elif j == 0: max_of_left = nums1[i - 1]
+else: max_of_left = max(nums1[i - 1], nums2[j - 1])
+
+Agar left partition balanced hai, toh max_of_left ko find karte hain. Agar total elements odd hain, toh yahi median hoga.
+
+if i == m: min_of_right = nums2[j]
+elif j == n: min_of_right = nums1[i]
+else: min_of_right = min(nums1[i], nums2[j])
+
+Agar total elements even hain, toh min_of_right ko bhi find karte hain aur median (max_of_left + min_of_right) / 2.0 return karte hain.
+
+Complexity Analysis:
+
+	•	Time Complexity: O(\log(\min(m, n))), kyunki hum binary search sirf choti array pe karte hain.
+	•	Space Complexity: O(1), kyunki hum constant space use kar rahe hain.
