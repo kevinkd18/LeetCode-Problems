@@ -1,0 +1,51 @@
+class Solution:
+    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
+
+Yahaan humne ek Solution class banayi hai aur uske andar addTwoNumbers method define kiya hai, jo l1 aur l2 linked lists ko parameters ke taur par leta hai.
+
+        dummyHead = ListNode(0)
+
+Yahaan pe humne ek dummy node dummyHead create kiya hai. Yeh nayi linked list ke head ko represent karne ke liye hai. Iska actual value zero hai, lekin hum dummy node ka use sirf list ko shuru karne ke liye kar rahe hain.
+
+        curr = dummyHead
+
+curr ek pointer hai jo result list mein nayi nodes ko add karte waqt aage badhta rahega. Pehle curr ko dummyHead pe set kiya gaya hai.
+
+        carry = 0
+
+carry ek variable hai jo digits ko add karte waqt carry-over ko store karega. Initially yeh zero hai.
+
+        while l1 != None or l2 != None or carry != 0:
+
+Yeh while loop tab tak chalega jab tak l1 aur l2 mein koi bhi node bacha ho ya carry zero na ho jaye. Matlab, jab tak humare paas koi digit ya carry-over add karne ko bacha hai, yeh loop chalta rahega.
+
+            l1Val = l1.val if l1 else 0
+            l2Val = l2.val if l2 else 0
+
+Yahaan hum l1 aur l2 ke current node ke values ko le rahe hain. Agar l1 ya l2 null ho (khatam ho chuki ho), toh uski value ko zero consider karenge.
+
+            columnSum = l1Val + l2Val + carry
+
+Hum l1Val, l2Val, aur carry ko add kar rahe hain aur is result ko columnSum mein store karte hain.
+
+            carry = columnSum // 10
+
+Yahaan hum carry ko update karte hain. Agar columnSum 10 ya usse bada hai, toh carry mein uska quotient (columnSum // 10) store karenge.
+
+            newNode = ListNode(columnSum % 10)
+
+columnSum ka remainder (columnSum % 10) nayi node ka value hoga. Yeh value 0 se 9 ke beech mein hoga. Isse ek nayi node mein store karke newNode create kiya gaya hai.
+
+            curr.next = newNode
+            curr = newNode
+
+Ab curr.next ko newNode par point karwa diya hai, aur curr ko newNode mein move kar diya, taake next iteration mein hum naye node ko curr se jod saken.
+
+            l1 = l1.next if l1 else None
+            l2 = l2.next if l2 else None
+
+l1 aur l2 ke pointers ko next nodes par move karte hain, agar woh exist karte hain. Agar nahi toh None set karte hain.
+
+        return dummyHead.next
+
+Finally, dummyHead.next ko return karte hain. Yeh dummyHead ke agla node hai jo nayi linked list ka actual head hoga.
