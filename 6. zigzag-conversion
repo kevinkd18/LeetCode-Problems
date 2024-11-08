@@ -1,0 +1,103 @@
+Is problem mein humein ek string `s` di gayi hai aur ek integer `numRows`. Humein `s` ko ek **zigzag pattern** mein arrange karna hai given number of rows ke hisaab se, aur phir result ko line by line read karke ek final string return karni hai.
+
+### Example Explanation:
+1. **Example 1**:
+   - Input: `s = "PAYPALISHIRING"`, `numRows = 3`
+   - Zigzag pattern:
+     ```
+     P   A   H   N
+     A P L S I I G
+     Y   I   R
+     ```
+   - Output: `"PAHNAPLSIIGYIR"`
+
+2. **Example 2**:
+   - Input: `s = "PAYPALISHIRING"`, `numRows = 4`
+   - Zigzag pattern:
+     ```
+     P     I    N
+     A   L S  I G
+     Y A   H R
+     P     I
+     ```
+   - Output: `"PINALSIGYAHRPI"`
+
+3. **Example 3**:
+   - Input: `s = "A"`, `numRows = 1`
+   - Since `numRows` is 1, the output is the same as the input string `"A"`.
+
+### Approach:
+
+1. **Special Case**: 
+   - Agar `numRows` 1 hai, toh directly string `s` ko return karenge kyunki zigzag pattern ka effect tab nahi hoga.
+  
+2. **Zigzag Traversal**:
+   - Ek list of strings (rows) banate hain jo har row ke characters ko store karega.
+   - `curRow` variable ke through current row track karte hain aur `goingDown` variable decide karega ki cursor upar ya neeche move ho raha hai.
+   - Har character ko proper row mein daalte hain aur row change karte hain `goingDown` ke hisaab se.
+
+3. **Final Output**:
+   - Har row ke contents ko concatenate karte hain taaki ek final result string mile.
+
+### Code:
+
+```python
+class Solution:
+    def convert(self, s: str, numRows: int) -> str:
+        # Special case: if numRows is 1, return the string as it is
+        if numRows == 1:
+            return s
+
+        # Create a list of empty strings for each row
+        rows = [""] * min(numRows, len(s))
+        curRow = 0
+        goingDown = False
+
+        # Traverse each character in the input string
+        for char in s:
+            rows[curRow] += char  # Add character to the current row
+            # Check if we need to go down or up
+            if curRow == 0 or curRow == numRows - 1:
+                goingDown = not goingDown  # Toggle direction
+            # Move up or down
+            curRow += 1 if goingDown else -1
+
+        # Join all rows to form the final zigzag string
+        return "".join(rows)
+```
+
+### Explanation of the Code:
+
+1. **Initialization**:
+   ```python
+   rows = [""] * min(numRows, len(s))
+   curRow = 0
+   goingDown = False
+   ```
+   - `rows` ek list hai jo har row ke characters ko store karega.
+   - `curRow` se current row track hoti hai.
+   - `goingDown` flag se hum decide karte hain ki hum neeche jaa rahe hain ya upar.
+
+2. **Loop through Characters**:
+   ```python
+   for char in s:
+       rows[curRow] += char
+       if curRow == 0 or curRow == numRows - 1:
+           goingDown = not goingDown
+       curRow += 1 if goingDown else -1
+   ```
+   - Har character ko uske row mein add karte hain.
+   - Agar hum first ya last row mein hain toh `goingDown` ko toggle kar dete hain.
+   - Row update hoti hai depending on `goingDown`.
+
+3. **Combine Rows**:
+   ```python
+   return "".join(rows)
+   ```
+   - Har row ke characters ko combine karte hain taaki final zigzag pattern string mile.
+
+### Complexity Analysis:
+- **Time Complexity**: \(O(n)\), jahan \(n\) string `s` ki length hai, kyunki hum har character ko ek baar process karte hain.
+- **Space Complexity**: \(O(n)\), kyunki hum ek list of strings `rows` use kar rahe hain to store the characters.
+
+Yeh approach efficient hai aur zigzag pattern string generate karne mein kam steps leti hai.
