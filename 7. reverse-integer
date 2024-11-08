@@ -1,0 +1,77 @@
+Is problem mein humein ek signed 32-bit integer `x` diya gaya hai, aur humein iska reverse number return karna hai. Agar reverse karne ke baad number 32-bit integer range ke bahar chala jaye, toh humein `0` return karna hai. Range for signed 32-bit integer hai [-2^31, 2^31 - 1], yaani [-2147483648, 2147483647].
+
+### Approach:
+1. **Sign Check**: 
+   - Pehle, `x` ke positive ya negative hone ka pata lagate hain. Agar `x` negative hai toh `sign = -1` set karenge, aur agar positive hai toh `sign = 1`. 
+   
+2. **Absolute Value**:
+   - `x` ko positive banana easy hai taaki reverse process ke waqt sign ki tension na rahe, isliye `abs(x)` se `x` ko positive mein convert karte hain.
+
+3. **Reversing Digits**:
+   - `rev` naam ka variable initialize karte hain jisme reversed number store hoga.
+   - Ek loop mein, har digit ko reverse order mein `rev` mein add karte hain jab tak `x` 0 na ho jaye.
+
+4. **Overflow Check**:
+   - Reverse karte waqt, agar `rev` ki value 32-bit signed integer range ko cross karti hai, toh `0` return kar dete hain.
+
+5. **Return Result**:
+   - Final result `sign * rev` ke through return karte hain taaki negative numbers bhi correct answer dein.
+
+### Code Explanation:
+
+```python
+class Solution:
+    def reverse(self, x: int) -> int:
+        # Determine the sign of x (1 for positive, -1 for negative)
+        sign = [1, -1][x < 0]  # If x < 0, sign is -1, else it's 1
+        rev, x = 0, abs(x)  # Initialize rev to store reversed number, x becomes positive
+
+        # Loop until x becomes 0
+        while x:
+            # divmod(x, 10) gives quotient (new x) and remainder (last digit)
+            x, mod = divmod(x, 10)
+            rev = rev * 10 + mod  # Append last digit to rev
+
+            # If rev exceeds 32-bit signed integer limit, return 0
+            if rev > 2**31 - 1:
+                return 0
+
+        # Multiply with sign and return the reversed integer
+        return sign * rev
+```
+
+### Explanation of the Code:
+
+1. **Initialize `sign`**:
+   ```python
+   sign = [1, -1][x < 0]
+   ```
+   - `sign` mein -1 set hoga agar `x` negative hai, aur 1 set hoga agar `x` positive hai.
+
+2. **Loop Through Digits**:
+   ```python
+   while x:
+       x, mod = divmod(x, 10)
+       rev = rev * 10 + mod
+   ```
+   - `divmod(x, 10)` se `x` ka last digit `mod` mein store hota hai aur baaki number ko `x` mein store karte hain.
+   - `rev` mein last digit ko add karte hain in reverse order.
+
+3. **Overflow Check**:
+   ```python
+   if rev > 2**31 - 1:
+       return 0
+   ```
+   - Agar `rev` 32-bit signed integer limit cross kar jaye toh `0` return karte hain.
+
+4. **Return Final Result**:
+   ```python
+   return sign * rev
+   ```
+   - `sign * rev` ke through final reversed number return hota hai, jo positive ya negative ho sakta hai based on original `x` ka sign.
+
+### Complexity Analysis:
+- **Time Complexity**: \(O(\log_{10}(x))\) kyunki har digit ko ek baar process karte hain.
+- **Space Complexity**: \(O(1)\) kyunki hum sirf constant space use karte hain.
+
+Yeh approach efficient hai aur given constraints ke liye suitable hai.
