@@ -1,0 +1,99 @@
+To solve the `myAtoi` function, we need to follow the specified rules to convert a string into a 32-bit signed integer. Here’s how we can implement this function step-by-step:
+
+### Approach:
+1. **Ignore Leading Whitespace**:
+   - Start by ignoring any leading whitespace in the string.
+
+2. **Check for Sign**:
+   - After skipping whitespace, check the next character. If it is `'-'`, set the sign to `-1`; if it is `'+'`, set the sign to `+1`. If there’s no sign character, assume it’s positive.
+
+3. **Read Digits Until Non-Digit Character**:
+   - Traverse the string and read characters until you reach a non-digit character or the end of the string. Convert these characters to an integer while building the number.
+
+4. **Handle 32-bit Integer Overflow**:
+   - Check if the result is within the 32-bit signed integer range `[-2^31, 2^31 - 1]`. If it goes beyond these limits, return the boundary values (`-2^31` for underflow and `2^31 - 1` for overflow).
+
+5. **Return the Final Result**:
+   - Multiply the accumulated number by the sign and return it as the final result.
+
+### Code Implementation:
+
+```python
+class Solution:
+    def myAtoi(self, s: str) -> int:
+        # Step 1: Remove leading whitespaces
+        s = s.lstrip()
+        
+        if not s:
+            return 0
+
+        # Step 2: Check for sign
+        sign = 1
+        index = 0
+        if s[0] == '-':
+            sign = -1
+            index += 1
+        elif s[0] == '+':
+            index += 1
+
+        # Step 3: Convert digits to integer
+        result = 0
+        while index < len(s) and s[index].isdigit():
+            result = result * 10 + int(s[index])
+            index += 1
+
+            # Step 4: Handle overflow conditions
+            if result > 2**31 - 1:
+                return -2**31 if sign == -1 else 2**31 - 1
+
+        # Step 5: Apply sign and return result
+        return sign * result
+```
+
+### Explanation of Code:
+
+1. **Removing Leading Whitespace**:
+   ```python
+   s = s.lstrip()
+   ```
+   - We use `lstrip()` to remove any leading spaces.
+
+2. **Determining Sign**:
+   ```python
+   sign = 1
+   index = 0
+   if s[0] == '-':
+       sign = -1
+       index += 1
+   elif s[0] == '+':
+       index += 1
+   ```
+   - We initialize `sign` to `1` (positive). If the first character after whitespace is `'-'`, we set `sign = -1` and move to the next character. If it’s `'+'`, we skip it by increasing `index`.
+
+3. **Convert Digits**:
+   ```python
+   result = 0
+   while index < len(s) and s[index].isdigit():
+       result = result * 10 + int(s[index])
+       index += 1
+   ```
+   - We iterate over the string, adding each digit to `result` while updating it in a way that forms the integer.
+
+4. **Overflow Check**:
+   ```python
+   if result > 2**31 - 1:
+       return -2**31 if sign == -1 else 2**31 - 1
+   ```
+   - We check if `result` has exceeded the 32-bit signed integer limit. If it has, we return the maximum or minimum 32-bit integer based on the sign.
+
+5. **Returning Final Result**:
+   ```python
+   return sign * result
+   ```
+   - Finally, we multiply `result` by `sign` to account for positive or negative values.
+
+### Complexity Analysis:
+- **Time Complexity**: \(O(n)\), where \(n\) is the length of the string `s`, as we go through the string once to parse and convert characters.
+- **Space Complexity**: \(O(1)\), as we use only a fixed amount of extra space.
+
+This implementation effectively handles leading whitespace, signs, integer overflow, and non-digit characters as per the problem's requirements.
