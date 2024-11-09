@@ -1,0 +1,64 @@
+To convert an integer to a Roman numeral, we can follow these steps using the rules provided:
+
+1. **Define Symbol Values**: Create a list of tuples where each tuple contains a Roman numeral and its value, starting from the largest to the smallest. This will allow us to find the largest possible symbol that can be subtracted from the current integer value.
+
+2. **Build the Roman Numeral**: Starting with the largest values, subtract the value of each symbol from the integer while appending the symbol to the result string. Continue this process until the entire integer has been converted.
+
+3. **Handle Subtractive Forms**: The predefined list should include subtractive forms like 4 (IV), 9 (IX), 40 (XL), etc., so we can directly match them during conversion.
+
+### Solution Code
+
+```python
+class Solution:
+    def intToRoman(self, num: int) -> str:
+        # Define Roman numeral symbols and their values, ordered from largest to smallest.
+        val_to_roman = [
+            (1000, "M"), (900, "CM"), (500, "D"), (400, "CD"),
+            (100, "C"), (90, "XC"), (50, "L"), (40, "XL"),
+            (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I")
+        ]
+        
+        result = ""
+        
+        # Loop through each (value, symbol) pair
+        for value, symbol in val_to_roman:
+            # Check how many times the current value fits into num
+            while num >= value:
+                result += symbol  # Append the Roman symbol to the result
+                num -= value      # Subtract the value from num
+        
+        return result
+```
+
+### Explanation
+
+1. **List Setup**: The `val_to_roman` list is ordered from largest to smallest values, including subtractive forms like 900 (CM) and 4 (IV). This setup ensures that we follow Roman numeral rules directly.
+
+2. **Loop through Symbols**: For each `(value, symbol)` pair:
+   - While `num` is greater than or equal to `value`, append the symbol to the result string and subtract `value` from `num`.
+   - This handles cases where a symbol needs to appear multiple times, as in `3000 = MMM` (by subtracting 1000 three times).
+
+3. **Return Result**: The loop stops once `num` reaches 0, giving us the full Roman numeral string.
+
+### Complexity
+
+- **Time Complexity**: \(O(1)\), since the maximum input value (3999) is constant, and the loop will execute a limited number of times.
+- **Space Complexity**: \(O(1)\), because only a fixed number of symbols are stored in the list, and we build the result string based on that.
+
+### Example Walkthrough
+
+#### Example 1: `num = 3749`
+
+1. Start with 3000 (MMM).
+2. For 700, use `DCC`.
+3. For 40, use `XL`.
+4. For 9, use `IX`.
+5. Result = `"MMMDCCXLIX"`.
+
+#### Example 2: `num = 58`
+
+1. For 50, use `L`.
+2. For 8, use `VIII`.
+3. Result = `"LVIII"`.
+
+This approach efficiently handles all cases by iterating through a fixed list of Roman numeral values, producing the correct Roman numeral string for any valid input in the range 1 to 3999.
