@@ -1,0 +1,71 @@
+This problem can be solved using a two-pointer approach, which is efficient and avoids the need for a brute-force O(n^2) solution. Here’s how it works:
+
+### Explanation
+
+The two-pointer technique involves placing two pointers, one at the beginning (`left`) and one at the end (`right`) of the `height` array. The area between the lines at these two pointers can be calculated by the formula:
+
+\[
+\text{Area} = \text{width} \times \text{height}
+\]
+
+where:
+- `width` is the distance between the two pointers (`right - left`),
+- `height` is the minimum of the two heights at the pointers (`min(height[left], height[right])`).
+
+To maximize the area, the algorithm follows these steps:
+1. Start with `left` at the beginning of the array and `right` at the end.
+2. Calculate the current area based on `left` and `right`.
+3. Update the maximum area if the current area is greater than the previous maximum.
+4. Move the pointer corresponding to the shorter line inward, as moving the taller line inward won’t increase the area (since height is limited by the shorter line).
+5. Repeat until the two pointers meet.
+
+### Code Implementation
+
+```python
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        left, right = 0, len(height) - 1
+        max_area = 0
+        
+        while left < right:
+            # Calculate the current area
+            width = right - left
+            current_height = min(height[left], height[right])
+            current_area = width * current_height
+            
+            # Update max_area if the current_area is greater
+            max_area = max(max_area, current_area)
+            
+            # Move the pointer corresponding to the shorter line
+            if height[left] < height[right]:
+                left += 1
+            else:
+                right -= 1
+        
+        return max_area
+```
+
+### Complexity Analysis
+
+- **Time Complexity**: \(O(n)\), where \(n\) is the length of the `height` array. This is because each element is processed only once as the pointers move inward.
+- **Space Complexity**: \(O(1)\), since only a few extra variables are used for pointers and storing the maximum area.
+
+### Example Walkthrough
+
+For `height = [1,8,6,2,5,4,8,3,7]`:
+
+1. **Initial**: `left = 0`, `right = 8`, `max_area = 0`
+   - Area = \( \min(1, 7) \times (8 - 0) = 1 \times 8 = 8 \)
+   - Update `max_area` to 8.
+   - Move `left` pointer because `height[left] < height[right]`.
+
+2. **Next**: `left = 1`, `right = 8`
+   - Area = \( \min(8, 7) \times (8 - 1) = 7 \times 7 = 49 \)
+   - Update `max_area` to 49.
+   - Move `right` pointer because `height[right] < height[left]`.
+
+Continue in this manner until the pointers meet. By the end, the maximum area found is 49.
+
+### Summary
+
+This two-pointer solution is efficient, with a time complexity of \(O(n)\), and makes it possible to find the maximum area without examining every possible pair of lines.
