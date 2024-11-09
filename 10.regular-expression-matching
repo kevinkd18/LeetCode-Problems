@@ -1,0 +1,56 @@
+This solution uses a recursive approach to implement regular expression matching with `.` and `*`, covering the entire string. Here’s a breakdown of how the code works.
+
+### Explanation of the Code:
+
+1. **Base Case (Empty Pattern)**:
+   - If the `pattern` is empty (`not pattern`), return `True` only if `text` is also empty, meaning both strings have been fully matched. Otherwise, it returns `False`.
+
+2. **First Match Check**:
+   - `first_match` checks if the first character of `text` matches the first character of `pattern`, or if the first character of `pattern` is `.` (which can match any character).
+   - This is done by verifying:
+     ```python
+     first_match = bool(text) and pattern[0] in {text[0], "."}
+     ```
+   - `bool(text)` ensures that `text` is non-empty (so we avoid an index error).
+
+3. **Handling the `*` Character**:
+   - If `pattern` has at least two characters, and the second character is `*`, then we consider two cases:
+     - **Zero occurrences of the character before `*`**: Move to the next part of the pattern by calling `self.isMatch(text, pattern[2:])`.
+     - **One or more occurrences of the character before `*`**: Only if `first_match` is `True`, we move one character forward in `text` and keep the `*` in `pattern`, calling `self.isMatch(text[1:], pattern)`.
+
+4. **If `*` is Not the Second Character**:
+   - If there’s no `*`, simply move one character forward in both `text` and `pattern` by calling `self.isMatch(text[1:], pattern[1:])`, but only if `first_match` is `True`.
+
+5. **Return Results**:
+   - The function will return `True` or `False` depending on whether `text` and `pattern` match.
+
+### Code Example:
+
+```python
+class Solution(object):
+    def isMatch(self, text: str, pattern: str) -> bool:
+        # Base case: if pattern is empty, return True only if text is also empty
+        if not pattern:
+            return not text
+
+        # Check if the first character matches or pattern[0] is '.'
+        first_match = bool(text) and pattern[0] in {text[0], "."}
+
+        # Handle '*' in the pattern
+        if len(pattern) >= 2 and pattern[1] == "*":
+            # Try zero occurrence of the preceding character or one/more occurrences if first_match
+            return (
+                self.isMatch(text, pattern[2:]) or
+                (first_match and self.isMatch(text[1:], pattern))
+            )
+        else:
+            # Move one character forward in both text and pattern if first_match
+            return first_match and self.isMatch(text[1:], pattern[1:])
+```
+
+### Complexity Analysis:
+
+- **Time Complexity**: Exponential in the worst case, \(O(2^{n+m})\), where \(n\) is the length of `text` and \(m\) is the length of `pattern`. This is because each `*` can lead to multiple recursive calls.
+- **Space Complexity**: \(O(n + m)\), as each recursive call adds to the call stack.
+
+This recursive approach is elegant and easy to understand but can be slow for longer strings and patterns due to repeated calculations. Using a dynamic programming (DP) approach, as shown in the previous solution, can optimize performance by avoiding redundant recursive calls.
