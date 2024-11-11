@@ -1,0 +1,102 @@
+To solve this problem, we need to generate all possible letter combinations that can be formed from the digits on a phone keypad. Each digit from 2-9 maps to a set of letters, similar to how phone keypads work. Here’s how we can approach the solution.
+
+### Approach
+
+1. **Mapping Digits to Letters**: We know that each digit (from 2 to 9) maps to a set of letters:
+   - `2` → `"abc"`
+   - `3` → `"def"`
+   - `4` → `"ghi"`
+   - `5` → `"jkl"`
+   - `6` → `"mno"`
+   - `7` → `"pqrs"`
+   - `8` → `"tuv"`
+   - `9` → `"wxyz"`
+   
+2. **Base Case**: If the input string `digits` is empty, we return an empty list `[]`, as there are no combinations to form.
+
+3. **Recursive or Iterative Combination Generation**:
+   - For each digit, we get the corresponding letters and combine each letter with the combinations generated from the remaining digits.
+   - This can be solved effectively using recursion (backtracking) or an iterative approach.
+
+4. **Backtracking Solution**:
+   - Start from an empty combination.
+   - For each digit, add each possible letter to the current combination and move to the next digit.
+   - Once we reach the end of the digits, add the current combination to the results.
+
+### Code Implementation
+
+Here’s a Python solution using backtracking:
+
+```python
+from typing import List
+
+class Solution:
+    def letterCombinations(self, digits: str) -> List[str]:
+        # Mapping from digits to corresponding letters
+        phone_map = {
+            "2": "abc", "3": "def", "4": "ghi", "5": "jkl",
+            "6": "mno", "7": "pqrs", "8": "tuv", "9": "wxyz"
+        }
+        
+        # Result list to store all combinations
+        results = []
+        
+        # Base case: if digits is empty, return an empty list
+        if not digits:
+            return results
+        
+        # Helper function to perform backtracking
+        def backtrack(index: int, current_combination: str):
+            # If the current combination is complete, add it to results
+            if index == len(digits):
+                results.append(current_combination)
+                return
+            
+            # Get the letters corresponding to the current digit
+            possible_letters = phone_map[digits[index]]
+            
+            # Loop through each letter and append it to the current combination
+            for letter in possible_letters:
+                backtrack(index + 1, current_combination + letter)
+        
+        # Start the backtracking from the first digit
+        backtrack(0, "")
+        
+        return results
+```
+
+### Explanation of the Code
+
+1. **Mapping Phone Digits**: We define `phone_map` to store the mapping from digits to their corresponding letters.
+2. **Base Case**: If `digits` is an empty string, we return `results`, which is an empty list.
+3. **Backtracking Function** (`backtrack`):
+   - The `index` parameter keeps track of the current position in the `digits` string.
+   - `current_combination` holds the current combination of letters we are building.
+   - If `index` reaches the length of `digits`, it means we’ve formed a complete combination, so we add `current_combination` to `results`.
+   - For each letter corresponding to the current digit, we call `backtrack` recursively with the next index and the updated `current_combination`.
+4. **Return Results**: Finally, `results` contains all possible letter combinations, which we return.
+
+### Example Walkthrough
+
+#### Example 1: `digits = "23"`
+1. **Mapping**:
+   - `2` maps to `["a", "b", "c"]`
+   - `3` maps to `["d", "e", "f"]`
+2. **Backtracking**:
+   - Start with `index = 0` and `current_combination = ""`.
+   - For `2`, add each letter (`"a"`, `"b"`, `"c"`) to `current_combination` and move to the next digit.
+   - For each letter from `2`, add each letter from `3` (`"d"`, `"e"`, `"f"`) to form combinations like `"ad"`, `"ae"`, `"af"`, etc.
+3. **Result**: `["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"]`.
+
+#### Example 2: `digits = ""`
+- Since `digits` is empty, return `[]`.
+
+#### Example 3: `digits = "2"`
+- Only one digit, so return the letters for `2`: `["a", "b", "c"]`.
+
+### Complexity Analysis
+
+- **Time Complexity**: \(O(3^n \times 4^m)\), where \(n\) is the number of digits that map to 3 letters (`2`, `3`, `4`, `5`, `6`, `8`) and \(m\) is the number of digits that map to 4 letters (`7`, `9`). In the worst case, we explore all possible combinations.
+- **Space Complexity**: \(O(3^n \times 4^m)\) for storing the results.
+
+This solution is efficient and leverages backtracking to explore each combination in a structured way.
