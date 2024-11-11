@@ -1,0 +1,102 @@
+This code finds the longest common prefix among an array of strings using a simpler approach without a Trie. Let's go through it step-by-step.
+
+### Explanation of the Code
+
+```python
+class Solution:
+    def longestCommonPrefix(self, strs: List[str]) -> str:
+        if len(strs) == 0:
+            return ""
+        prefix = strs[0]
+        for i in range(1, len(strs)):
+            while strs[i].find(prefix) != 0:
+                prefix = prefix[0 : len(prefix) - 1]
+                if prefix == "":
+                    return ""
+        return prefix
+```
+
+### Step-by-Step Breakdown
+
+1. **Check if `strs` is empty**:
+   ```python
+   if len(strs) == 0:
+       return ""
+   ```
+   - If the input list `strs` is empty, there can't be a common prefix, so the function returns an empty string.
+
+2. **Initialize the `prefix` with the first string**:
+   ```python
+   prefix = strs[0]
+   ```
+   - The function starts by assuming the longest common prefix is the first string in the array, `strs[0]`.
+   - This `prefix` will be shortened in the following loop to ensure it matches with all other strings in the array.
+
+3. **Loop through each string in `strs` starting from the second**:
+   ```python
+   for i in range(1, len(strs)):
+   ```
+   - This loop iterates over each string in `strs`, starting from the second string (`strs[1]`). The goal is to reduce the `prefix` until it matches the beginning of each string.
+
+4. **Adjust the prefix to match the beginning of the current string**:
+   ```python
+   while strs[i].find(prefix) != 0:
+       prefix = prefix[0 : len(prefix) - 1]
+       if prefix == "":
+           return ""
+   ```
+   - Inside the loop, it checks if the `prefix` is found at the start of the current string (`strs[i]`).
+     - `strs[i].find(prefix) != 0`: This condition checks if `prefix` is not at the beginning of `strs[i]`. If it’s not, then we need to shorten `prefix`.
+   - **Shortening the Prefix**:
+     - `prefix = prefix[0 : len(prefix) - 1]`: This line removes the last character from `prefix`, effectively making it shorter.
+   - **Check for an empty prefix**:
+     - If `prefix` becomes an empty string (`""`), it means there is no common prefix among all strings, and we return an empty string immediately.
+
+5. **Return the `prefix`**:
+   ```python
+   return prefix
+   ```
+   - After the loop finishes, `prefix` will contain the longest common prefix of all strings in `strs`.
+
+### Example Walkthrough
+
+Let’s go through an example to illustrate how the code works.
+
+#### Example 1: `strs = ["flower", "flow", "flight"]`
+
+1. **Initialization**:
+   - `prefix = "flower"`
+
+2. **First iteration (i=1, comparing "flower" with "flow")**:
+   - `while strs[1].find(prefix) != 0`: `"flow".find("flower")` is not at the start, so we shorten `prefix`.
+   - `prefix = "flowe"` (remove last character).
+   - `prefix = "flow"` (still not at the start, so we remove again).
+   - `"flow".find("flow")` is at the start (index `0`), so we move to the next string.
+
+3. **Second iteration (i=2, comparing "flow" with "flight")**:
+   - `"flight".find("flow")` is not at the start, so we shorten `prefix`.
+   - `prefix = "flo"` (remove last character).
+   - `prefix = "fl"` (still not at the start, so we remove again).
+   - `"flight".find("fl")` is at the start, so we’re done.
+
+4. **Return result**:
+   - After finishing the loop, `prefix = "fl"`, which is the longest common prefix.
+
+#### Example 2: `strs = ["dog", "racecar", "car"]`
+
+1. **Initialization**:
+   - `prefix = "dog"`
+
+2. **First iteration (i=1, comparing "dog" with "racecar")**:
+   - `"racecar".find("dog")` is not at the start, so we shorten `prefix`.
+   - `prefix = "do"` (remove last character).
+   - `prefix = "d"` (remove again).
+   - `prefix = ""` (remove again).
+   - Since `prefix` becomes an empty string, we return `""`.
+
+### Complexity Analysis
+
+- **Time Complexity**: O(S), where S is the sum of all characters in the strings. In the worst case, each character might need to be checked and removed.
+- **Space Complexity**: O(1), since we only use a constant amount of extra space.
+
+This approach is efficient and works well for this problem. It keeps shortening the `prefix` until it matches all strings in `strs`.
