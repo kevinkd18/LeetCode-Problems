@@ -1,0 +1,97 @@
+To solve this problem, we need to find three numbers in the array `nums` such that their sum is as close as possible to the given `target`. The approach is similar to the "3-sum" problem but with a slight modification to minimize the difference between the sum and the target instead of finding an exact match.
+
+### Approach
+
+1. **Sort the Array**: First, sort the array `nums` to use the two-pointer technique effectively.
+2. **Initialize Variables**:
+   - We need a variable `closest_sum` to keep track of the closest sum found so far. Initially, we can set it to a large value or assign it the sum of the first three elements in `nums`.
+3. **Iterate with a Fixed Point**: Use a loop to iterate through each element in the sorted array `nums`, treating it as the first number in the triplet.
+4. **Two-Pointer Technique**:
+   - For each number at index `i`, set up two pointers: `left` just after `i` and `right` at the end of the array.
+   - Calculate the sum of `nums[i]`, `nums[left]`, and `nums[right]`.
+   - If this sum is closer to the `target` than the current `closest_sum`, update `closest_sum`.
+   - If the sum is less than the target, move the `left` pointer to the right (to increase the sum).
+   - If the sum is greater than the target, move the `right` pointer to the left (to decrease the sum).
+5. **Return the Closest Sum**: Once all possible triplets have been evaluated, `closest_sum` will hold the closest possible sum to the target.
+
+### Code Implementation
+
+Here’s how this approach translates into Python code:
+
+```python
+from typing import List
+
+class Solution:
+    def threeSumClosest(self, nums: List[int], target: int) -> int:
+        # Step 1: Sort the array
+        nums.sort()
+        
+        # Initialize the closest sum to the sum of the first three elements
+        closest_sum = nums[0] + nums[1] + nums[2]
+        
+        # Step 2: Iterate through each number in the sorted array
+        for i in range(len(nums) - 2):
+            left, right = i + 1, len(nums) - 1
+            
+            # Step 3: Two-pointer technique
+            while left < right:
+                current_sum = nums[i] + nums[left] + nums[right]
+                
+                # Update closest sum if the current sum is closer to the target
+                if abs(current_sum - target) < abs(closest_sum - target):
+                    closest_sum = current_sum
+                
+                # Move pointers based on the comparison with the target
+                if current_sum < target:
+                    left += 1  # We need a larger sum
+                elif current_sum > target:
+                    right -= 1  # We need a smaller sum
+                else:
+                    # If the current sum is exactly equal to the target, we found the closest possible sum
+                    return current_sum
+        
+        return closest_sum
+```
+
+### Explanation of the Code
+
+1. **Sorting**: `nums.sort()` sorts the array in ascending order.
+2. **Initialize Closest Sum**: The initial `closest_sum` is set to the sum of the first three elements. This acts as our starting point for comparison.
+3. **Outer Loop**: The `for` loop iterates through each element in `nums` (up to the third-last element since we need triplets).
+4. **Two-Pointer Technique**:
+   - `left` starts just after `i`, and `right` starts at the end of the array.
+   - **Update Closest Sum**: For each triplet sum, if the absolute difference between `current_sum` and `target` is less than the absolute difference between `closest_sum` and `target`, we update `closest_sum`.
+   - **Move Pointers**:
+     - If `current_sum < target`, increment `left` to try to get a larger sum.
+     - If `current_sum > target`, decrement `right` to try to get a smaller sum.
+     - If `current_sum == target`, return `current_sum` immediately because we found an exact match.
+5. **Return Closest Sum**: After the loop, `closest_sum` holds the closest sum to the target.
+
+### Complexity Analysis
+
+- **Time Complexity**: \(O(n^2)\), where \(n\) is the length of `nums`. Sorting the array takes \(O(n \log n)\), and the two-pointer scan for each element takes \(O(n)\), making the overall complexity \(O(n^2)\).
+- **Space Complexity**: \(O(1)\), since we are only using a few extra variables for calculations and do not need additional data structures that grow with the input size.
+
+### Example Walkthrough
+
+#### Example 1: `nums = [-1, 2, 1, -4]`, `target = 1`
+
+1. **Sorted Array**: `nums = [-4, -1, 1, 2]`
+2. **Iterations**:
+   - `i = 0`, `nums[i] = -4`
+     - `left = 1`, `right = 3`: `current_sum = -4 + (-1) + 2 = -3`
+       - `closest_sum` is updated to `-3` because `abs(-3 - 1) < abs(initial closest_sum - 1)`.
+     - Move `left` to 2: `current_sum = -4 + 1 + 2 = -1`
+       - `closest_sum` is updated to `-1` because `abs(-1 - 1) < abs(-3 - 1)`.
+     - Move `left` to 3, end inner loop.
+   - `i = 1`, `nums[i] = -1`
+     - `left = 2`, `right = 3`: `current_sum = -1 + 1 + 2 = 2`
+       - `closest_sum` is updated to `2` because `abs(2 - 1) < abs(-1 - 1)`.
+3. **Result**: Closest sum is `2`.
+
+#### Example 2: `nums = [0, 0, 0]`, `target = 1`
+
+- **Sorted Array**: `nums = [0, 0, 0]`
+- `closest_sum = 0`, which is the only possible sum, so the result is `0`.
+
+This approach efficiently finds the triplet sum that is closest to the target.
