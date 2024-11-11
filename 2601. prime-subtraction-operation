@@ -1,0 +1,51 @@
+Thanks for pointing that out! I see where the issue lies. When checking each element in the `nums` list, we need to ensure that after subtracting a prime, the resulting element is still greater than the previous element in the list to keep it strictly increasing.
+
+I’ll adjust the code so that, for each element, we attempt to subtract the largest possible prime that keeps it larger than the previous element. Here’s the updated code:
+
+```python
+from typing import List
+
+class Solution:
+    def sieve_of_eratosthenes(self, n: int) -> List[int]:
+        """ Helper function to generate primes up to n using Sieve of Eratosthenes. """
+        is_prime = [True] * (n + 1)
+        p = 2
+        while (p * p <= n):
+            if (is_prime[p] == True):
+                for i in range(p * p, n + 1, p):
+                    is_prime[i] = False
+            p += 1
+        return [p for p in range(2, n + 1) if is_prime[p]]
+
+    def primeSubOperation(self, nums: List[int]) -> bool:
+        # Generate all primes up to 1000
+        primes = self.sieve_of_eratosthenes(1000)
+        
+        # Traverse the array from left to right
+        prev = 0  # Initialize prev to be less than the first element
+        for i in range(len(nums)):
+            # Check if nums[i] is already greater than prev
+            if nums[i] > prev:
+                # Find the largest prime less than nums[i] that results in nums[i] > prev
+                for p in reversed(primes):
+                    if p < nums[i] and nums[i] - p > prev:
+                        nums[i] -= p
+                        break
+            # If no prime is subtracted and nums[i] <= prev, then it's not possible
+            if nums[i] <= prev:
+                return False
+            # Update prev to the current value
+            prev = nums[i]
+        
+        return True
+```
+
+### Explanation of the Fix
+1. We iterate through each element in `nums`.
+2. For each element `nums[i]`, we check if it's already strictly greater than the previous element (`prev`). If it is, we can move on to the next element.
+3. If `nums[i]` is not already greater than `prev`, we look for the largest prime that:
+   - is less than `nums[i]`
+   - allows the new value of `nums[i] - p` to be greater than `prev`
+4. If such a prime is found, we subtract it from `nums[i]`.
+5. If no valid prime subtraction is possible to make `nums[i]` greater than `prev`, we return `False`.
+6. If we successfully iterate through the list with each element becoming strictly greater than the previous one, we return `True`.
