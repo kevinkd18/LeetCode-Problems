@@ -1,0 +1,109 @@
+To solve this problem, we need to find all unique triplets in an integer array `nums` where the sum of three elements is equal to zero. This is a classic "3-sum" problem, and we can solve it efficiently using sorting and the two-pointer approach.
+
+Here's how we can approach the problem:
+
+### Approach
+
+1. **Sort the Array**: First, sort the array `nums`. This allows us to use the two-pointer technique effectively.
+2. **Iterate with a Fixed Point**: Use a loop to iterate through each number in the array, treating it as the first number of the triplet. For each number at index `i`, we want to find two other numbers in the rest of the array (to the right of `i`) that together with `nums[i]` sum to zero.
+3. **Two-Pointer Technique**:
+   - After selecting the first number `nums[i]`, set up two pointers:
+     - `left` pointer, initially positioned just after `i`.
+     - `right` pointer, initially positioned at the end of the array.
+   - Calculate the sum of `nums[i]`, `nums[left]`, and `nums[right]`.
+   - If the sum is zero, add the triplet `[nums[i], nums[left], nums[right]]` to the result.
+   - If the sum is less than zero, move the `left` pointer to the right (to increase the sum).
+   - If the sum is greater than zero, move the `right` pointer to the left (to decrease the sum).
+4. **Avoid Duplicates**:
+   - To avoid duplicate triplets, skip over duplicate values for both `i` (outer loop) and within the two-pointer loop (for `left` and `right`).
+5. **Return the Result**: After iterating through all elements and finding all unique triplets, return the result list.
+
+### Code Implementation
+
+Here's how this approach translates to Python code:
+
+```python
+from typing import List
+
+class Solution:
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        nums.sort()  # Step 1: Sort the array
+        result = []
+
+        # Step 2: Iterate through each number in the sorted array
+        for i in range(len(nums) - 2):
+            # Skip duplicate elements for the first number
+            if i > 0 and nums[i] == nums[i - 1]:
+                continue
+
+            # Step 3: Set up two pointers
+            left, right = i + 1, len(nums) - 1
+            while left < right:
+                total = nums[i] + nums[left] + nums[right]
+
+                # Check if we found a triplet
+                if total == 0:
+                    result.append([nums[i], nums[left], nums[right]])
+
+                    # Move left and right pointers and skip duplicates
+                    while left < right and nums[left] == nums[left + 1]:
+                        left += 1
+                    while left < right and nums[right] == nums[right - 1]:
+                        right -= 1
+
+                    # Move pointers inward
+                    left += 1
+                    right -= 1
+
+                # Adjust pointers based on the sum
+                elif total < 0:
+                    left += 1  # We need a larger sum
+                else:
+                    right -= 1  # We need a smaller sum
+
+        return result
+```
+
+### Explanation of the Code
+
+1. **Sorting**: `nums.sort()` sorts the array in ascending order.
+2. **Outer Loop**: The `for` loop iterates through each element in `nums` (up to the third-last element since we need triplets).
+   - **Skip Duplicates**: `if i > 0 and nums[i] == nums[i - 1]` checks for duplicates. If the current element `nums[i]` is the same as the previous, skip it.
+3. **Two Pointers**: `left` starts just after `i`, and `right` starts at the end of the array.
+4. **Sum Calculation**:
+   - If `total == 0`, we found a valid triplet, so add `[nums[i], nums[left], nums[right]]` to `result`.
+   - To avoid duplicate triplets, move `left` and `right` pointers while skipping over identical values.
+   - If `total < 0`, increment `left` to try to increase the sum.
+   - If `total > 0`, decrement `right` to try to decrease the sum.
+5. **Return Result**: After completing the loops, `result` contains all unique triplets that sum up to zero.
+
+### Complexity Analysis
+
+- **Time Complexity**: \(O(n^2)\), where \(n\) is the length of `nums`. Sorting the array takes \(O(n \log n)\), and the two-pointer scan for each element takes \(O(n)\), making the overall complexity \(O(n^2)\).
+- **Space Complexity**: \(O(k)\), where \(k\) is the number of triplets in the result list. We are not using any additional data structures that grow with input size, so this is optimal for space.
+
+### Example Walkthrough
+
+#### Example 1: `nums = [-1, 0, 1, 2, -1, -4]`
+
+1. **Sorted Array**: `nums = [-4, -1, -1, 0, 1, 2]`
+2. **Iterations**:
+   - `i = 0`: `nums[i] = -4`, no triplet found.
+   - `i = 1`: `nums[i] = -1`
+     - `left = 2`, `right = 5`: Triplet `[-1, -1, 2]` found.
+     - `left = 3`, `right = 4`: Triplet `[-1, 0, 1]` found.
+   - `i = 2`: `nums[i] = -1`, skip because it’s a duplicate of `nums[1]`.
+   - Remaining iterations do not yield new triplets.
+3. **Result**: `[[ -1, -1, 2], [-1, 0, 1]]`
+
+#### Example 2: `nums = [0, 1, 1]`
+
+- **Sorted Array**: `nums = [0, 1, 1]`
+- No valid triplets, so the result is `[]`.
+
+#### Example 3: `nums = [0, 0, 0]`
+
+- **Sorted Array**: `nums = [0, 0, 0]`
+- Triplet `[0, 0, 0]` is found, so the result is `[[0, 0, 0]]`.
+
+This code efficiently finds all unique triplets that sum to zero by leveraging sorting and the two-pointer technique.
