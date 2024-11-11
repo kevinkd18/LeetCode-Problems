@@ -1,0 +1,100 @@
+This implementation leverages a recursive approach called `kSum` to handle the generalized problem of finding unique `k`-tuples (here `k=4`) that sum to a target. Here's an explanation of the code.
+
+### Explanation of the Code
+
+1. **Sorting the Array**: 
+   - `nums` is sorted initially to simplify the process of handling duplicate elements and applying the two-pointer technique for `2Sum`.
+
+2. **kSum Function**:
+   - `kSum` is a recursive function that takes the current list `nums`, the target sum `target`, and the number `k` of elements we want in the subset.
+   - **Base Case**: 
+     - If `k == 2`, it calls the `twoSum` function to find all unique pairs that sum to the target (classic 2Sum problem).
+   - **Recursive Case**:
+     - If `k > 2`, it iterates through `nums`, recursively calling `kSum` for each element while reducing `k` by 1 and adjusting the target.
+     - For each unique element, it recursively finds `(k-1)`-tuples that sum to `target - nums[i]`.
+     - It only includes a number in the subset if it is the first occurrence of that number in this recursive call, to avoid duplicate quadruplets.
+   - Finally, it appends the current element `nums[i]` to each subset returned by the recursive call and adds it to `res`.
+
+3. **twoSum Function**:
+   - The `twoSum` function uses the two-pointer technique to find pairs in `nums` that sum to `target`.
+   - It increments the left pointer `lo` if the current sum is less than the target and decrements the right pointer `hi` if the current sum is greater.
+   - If a pair matches the target, it is added to the results.
+   - To avoid duplicates, `lo` is incremented past any duplicate values, and `hi` is decremented similarly.
+
+4. **Return Result**:
+   - Finally, the `fourSum` function calls `kSum` with `k=4` to find all unique quadruplets that sum to the target and returns the result.
+
+### Code
+
+```python
+from typing import List
+
+class Solution:
+    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
+
+        def kSum(nums: List[int], target: int, k: int) -> List[List[int]]:
+            res = []
+
+            # If we have run out of numbers to add, return res.
+            if not nums:
+                return res
+
+            # There are k remaining values to add to the sum. The
+            # average of these values is at least target // k.
+            average_value = target // k
+
+            # We cannot obtain a sum of target if the smallest value
+            # in nums is greater than target // k or if the largest
+            # value in nums is smaller than target // k.
+            if average_value < nums[0] or nums[-1] < average_value:
+                return res
+
+            if k == 2:
+                return twoSum(nums, target)
+
+            for i in range(len(nums)):
+                if i == 0 or nums[i - 1] != nums[i]:
+                    for subset in kSum(nums[i + 1 :], target - nums[i], k - 1):
+                        res.append([nums[i]] + subset)
+
+            return res
+
+        def twoSum(nums: List[int], target: int) -> List[List[int]]:
+            res = []
+            lo, hi = 0, len(nums) - 1
+
+            while lo < hi:
+                curr_sum = nums[lo] + nums[hi]
+                if curr_sum < target or (lo > 0 and nums[lo] == nums[lo - 1]):
+                    lo += 1
+                elif curr_sum > target or (hi < len(nums) - 1 and nums[hi] == nums[hi + 1]):
+                    hi -= 1
+                else:
+                    res.append([nums[lo], nums[hi]])
+                    lo += 1
+                    hi -= 1
+
+            return res
+
+        nums.sort()
+        return kSum(nums, target, 4)
+```
+
+### Example Walkthrough
+
+1. **Example 1**:
+   - `nums = [1, 0, -1, 0, -2, 2]`, `target = 0`
+   - After sorting: `[-2, -1, 0, 0, 1, 2]`
+   - The function will recursively reduce the problem to `3Sum` and then `2Sum`, ultimately finding unique quadruplets that sum to 0:
+     - `[[-2, -1, 1, 2], [-2, 0, 0, 2], [-1, 0, 0, 1]]`
+
+2. **Example 2**:
+   - `nums = [2, 2, 2, 2, 2]`, `target = 8`
+   - After sorting, all elements are `2`, and since they add up to the target, it will return `[[2, 2, 2, 2]]`.
+
+### Complexity Analysis
+
+- **Time Complexity**: The `kSum` function has an overall time complexity of \(O(n^{k-1})\) in the worst case. For `fourSum`, this results in \(O(n^3)\) due to the recursive calls and the two-pointer technique used in `twoSum`.
+- **Space Complexity**: \(O(n)\), mainly for the recursive call stack and the space used to store intermediate results.
+
+This solution is efficient for the problem constraints and leverages recursion to handle `k`-sum problems in a generalized way.
