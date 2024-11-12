@@ -1,0 +1,122 @@
+This code defines a class `Solution` with a method `solveSudoku` that solves a Sudoku puzzle using backtracking. Below, I’ll explain each part of the code in detail.
+
+```python
+class Solution:
+```
+
+This defines a class named `Solution`. In Python, a class is a way to group related functions and data together.
+
+```python
+  def solveSudoku(self, board: list[list[str]]) -> None:
+```
+
+This line defines a function inside the `Solution` class called `solveSudoku`, which takes in one parameter, `board`. The `board` is a 9x9 grid represented as a list of lists containing strings (each cell in the board is either a number or the dot character `.` to represent an empty cell). `-> None` indicates that this function doesn't return any value.
+
+```python
+    def isValid(row: int, col: int, c: str) -> bool:
+```
+
+This is a helper function named `isValid` inside `solveSudoku`. It checks if it's valid to place a given number `c` in the cell at position `(row, col)` on the board. This function returns `True` if the placement is valid and `False` otherwise.
+
+```python
+      for i in range(9):
+```
+
+This starts a `for` loop that iterates over `i` from `0` to `8`. This loop is used to check the conditions that will determine whether placing `c` at `(row, col)` is allowed.
+
+```python
+        if (board[i][col] == c or
+            board[row][i] == c or
+                board[3 * (row // 3) + i // 3][3 * (col // 3) + i % 3] == c):
+```
+
+This `if` statement checks three conditions:
+1. `board[i][col] == c`: Checks if `c` already exists in the same column (`col`).
+2. `board[row][i] == c`: Checks if `c` already exists in the same row (`row`).
+3. `board[3 * (row // 3) + i // 3][3 * (col // 3) + i % 3] == c`: Checks if `c` is in the same 3x3 subgrid as `(row, col)`.
+
+If any of these conditions are `True`, it means placing `c` in `(row, col)` would violate Sudoku rules, so the function returns `False`.
+
+```python
+          return False
+```
+
+If any condition above is met, the function returns `False`, meaning `c` cannot be placed at `(row, col)`.
+
+```python
+      return True
+```
+
+If none of the conditions are `True`, the function returns `True`, meaning it’s valid to place `c` at `(row, col)`.
+
+```python
+    def solve(s: int) -> bool:
+```
+
+This defines another helper function `solve`, which takes an integer `s` representing the current cell index. This function is responsible for filling in the Sudoku board using backtracking. It returns `True` if the board is successfully solved and `False` otherwise.
+
+```python
+      if s == 81:
+        return True
+```
+
+This checks if `s` has reached `81` (the total number of cells on the board). If so, it means we have filled all cells, and the function returns `True`.
+
+```python
+      i = s // 9
+      j = s % 9
+```
+
+This calculates the `row` (`i`) and `column` (`j`) from the current cell index `s`. Using integer division (`//`), we get the row number, and using the remainder (`%`), we get the column number.
+
+```python
+      if board[i][j] != '.':
+        return solve(s + 1)
+```
+
+If the cell `(i, j)` is already filled (not `.`), the function moves to the next cell by calling `solve(s + 1)`.
+
+```python
+      for c in string.digits[1:]:
+```
+
+This loop iterates over the characters `'1'` to `'9'`, trying each possible number in the empty cell at `(i, j)`.
+
+```python
+        if isValid(i, j, c):
+```
+
+This checks if placing `c` at `(i, j)` is valid by calling the `isValid` function.
+
+```python
+          board[i][j] = c
+```
+
+If placing `c` at `(i, j)` is valid, it sets `board[i][j]` to `c`, trying this placement.
+
+```python
+          if solve(s + 1):
+            return True
+```
+
+After placing `c` at `(i, j)`, it calls `solve(s + 1)` to move to the next cell. If this leads to a successful solution (`solve(s + 1)` returns `True`), it returns `True`, meaning the board is solved.
+
+```python
+          board[i][j] = '.'
+```
+
+If placing `c` at `(i, j)` doesn't lead to a solution (meaning the next cells couldn't be solved), it "unplaces" `c` by setting `board[i][j]` back to `.` (backtracking).
+
+```python
+      return False
+```
+
+If no valid number can be placed at `(i, j)`, it returns `False`, indicating that the current path doesn't lead to a solution.
+
+```python
+    solve(0)
+```
+
+Finally, it calls `solve(0)` to start filling the board from the first cell (index `0`). 
+
+This approach systematically attempts to fill each cell with a valid number, backtracking if needed until the board is solved.
