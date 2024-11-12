@@ -1,0 +1,34 @@
+This code is a solution to find the first missing positive integer in an unsorted integer array, using an efficient in-place algorithm.
+
+### Explanation of the Code:
+
+1. **Correct Slot Placement**:
+   - The core idea is to place each positive integer `num` at the index `num - 1` in the array, so that ideally, `nums[i] = i + 1` for all `i`.
+   - This is achieved by looping through each element and, while the conditions `nums[i] > 0`, `nums[i] <= n`, and `nums[nums[i] - 1] != nums[i]` hold true, swapping `nums[i]` to its correct position.
+   - This ensures that all positive integers within the range `[1, n]` are placed at their correct positions.
+
+2. **Finding the First Missing Positive**:
+   - After rearranging, if `nums[i]` is not equal to `i + 1` for any `i`, then `i + 1` is the smallest missing positive integer.
+   - If all positions from `0` to `n-1` contain the correct positive integer, it means the smallest missing positive integer is `n + 1` (e.g., if the array has all integers from `1` to `n`).
+
+3. **Return Value**:
+   - The function returns the smallest missing positive integer according to the conditions above.
+
+### Edge Cases:
+- **Empty array**: If `nums` is empty, the result should be `1` since that’s the first positive integer.
+- **All negative numbers**: If all numbers are negative or zero, the result should be `1`.
+- **Contiguous range from 1 to n**: If `nums` contains all numbers from `1` to `n`, the output should be `n + 1`.
+
+### Example Usage:
+```python
+solution = Solution()
+print(solution.firstMissingPositive([3, 4, -1, 1]))  # Expected output: 2
+print(solution.firstMissingPositive([1, 2, 0]))      # Expected output: 3
+print(solution.firstMissingPositive([7, 8, 9, 11, 12]))  # Expected output: 1
+```
+
+### Complexity:
+- **Time Complexity**: \(O(n)\), as each number is placed in its correct position at most once.
+- **Space Complexity**: \(O(1)\), as we are modifying the array in place.
+
+This solution is efficient and works well with large arrays due to its in-place operation and linear time complexity.
