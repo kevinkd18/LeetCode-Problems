@@ -1,0 +1,59 @@
+The code you provided is for solving a wildcard pattern-matching problem. However, there's a minor bug in the helper function `isMatch(i, j)`, which affects the matching logic. Currently, it doesn't correctly check for both wildcard characters (`*` and `?`). I’ll explain the changes and provide the corrected code below.
+
+### Key Changes
+1. **Correct `isMatch` function**: This function should check if `p[j]` is `?` (which matches any single character) or if `s[i] == p[j]`.
+2. **Logic for matching characters**: We need to ensure that the base cases and transitions in the `dp` table correctly handle the `*` and `?` characters.
+
+Here's the corrected code:
+
+```python
+class Solution:
+    def isMatch(self, s: str, p: str) -> bool:
+        m = len(s)
+        n = len(p)
+        # dp[i][j] := True if s[0..i) matches p[0..j)
+        dp = [[False] * (n + 1) for _ in range(m + 1)]
+        dp[0][0] = True
+
+        # Initialize the dp table for patterns starting with '*'
+        for j in range(n):
+            if p[j] == '*':
+                dp[0][j + 1] = dp[0][j]
+            else:
+                break  # Stop initialization if the character is not '*'
+
+        for i in range(m):
+            for j in range(n):
+                if p[j] == '*':
+                    # '*' can match zero characters (dp[i+1][j]) or one/more characters (dp[i][j+1])
+                    dp[i + 1][j + 1] = dp[i + 1][j] or dp[i][j + 1]
+                elif p[j] == '?' or s[i] == p[j]:
+                    # '?' matches any single character, or s[i] matches p[j]
+                    dp[i + 1][j + 1] = dp[i][j]
+
+        return dp[m][n]
+```
+
+### Explanation
+
+1. **Initialization**:
+   - We initialize `dp[0][0] = True` because an empty pattern matches an empty string.
+   - For `dp[0][j + 1]`, if `p[j]` is `*`, it can match an empty string, so `dp[0][j + 1] = dp[0][j]`. This handles patterns that start with `*`.
+
+2. **Filling the `dp` table**:
+   - If `p[j] == '*'`, it can match zero characters (i.e., `dp[i + 1][j]`) or one or more characters (i.e., `dp[i][j + 1]`).
+   - If `p[j] == '?'` or `s[i] == p[j]`, we set `dp[i + 1][j + 1] = dp[i][j]`, meaning that they match one character.
+
+3. **Final Result**:
+   - The result is in `dp[m][n]`, which tells us whether the entire string `s` matches the pattern `p`.
+
+### Example Usage
+You can use this function like this:
+
+```python
+solution = Solution()
+print(solution.isMatch("adceb", "*a*b"))  # Expected output: True
+print(solution.isMatch("acdcb", "a*c?b"))  # Expected output: False
+```
+
+This corrected code should now produce the expected results for various pattern-matching scenarios.
