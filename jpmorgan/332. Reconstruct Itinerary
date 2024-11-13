@@ -1,0 +1,80 @@
+Here's a line-by-line explanation of the `findItinerary` function, which reconstructs an itinerary from a list of flight tickets to visit all locations in lexical order.
+
+### Problem Summary
+Given a list of tickets, each ticket being a pair `[from, to]`, the task is to reconstruct the entire itinerary:
+- All locations should be visited.
+- If multiple itineraries are possible, the itinerary that is lexicographically smallest is chosen.
+- The itinerary starts from "JFK".
+
+### Solution Approach
+
+This solution uses **Depth-First Search (DFS)** and constructs a **graph** where each node represents a location, and edges represent direct flights to other locations. We use **backtracking** to ensure the correct order and **lexical ordering** by reversing and sorting the tickets.
+
+### Code Explanation
+
+```python
+class Solution:
+  def findItinerary(self, tickets: list[list[str]]) -> list[str]:
+```
+
+This defines the `findItinerary` function inside a `Solution` class. The function takes `tickets` as input, which is a list of lists where each sublist represents a flight ticket as `[from, to]`. It returns a list of strings representing the reconstructed itinerary.
+
+```python
+    ans = []
+    graph = collections.defaultdict(list)
+```
+
+- `ans` is initialized as an empty list to store the final itinerary in reverse order.
+- `graph` is a dictionary where each key represents a starting location, and each value is a list of destinations from that location.
+
+```python
+    for a, b in reversed(sorted(tickets)):
+      graph[a].append(b)
+```
+
+- This loop iterates through the sorted tickets in reverse lexicographical order, so destinations are appended in reverse alphabetical order. Sorting is essential to ensure the correct lexical order in DFS.
+- By reversing the sorted tickets, we can use `.pop()` in DFS to get the smallest lexical order (since `.pop()` will take the last element from the list).
+
+```python
+    def dfs(u: str) -> None:
+      while u in graph and graph[u]:
+        dfs(graph[u].pop())
+      ans.append(u)
+```
+
+This defines a recursive DFS function:
+- `while u in graph and graph[u]` ensures we process all destinations from the current location `u`.
+- `dfs(graph[u].pop())` recursively visits the next location by popping the last destination in the list (ensuring lexical order).
+- After visiting all destinations from `u`, `ans.append(u)` appends `u` to `ans`, building the itinerary in reverse order.
+
+```python
+    dfs('JFK')
+    return ans[::-1]
+```
+
+- We start the DFS from "JFK" as required by the problem.
+- Finally, we return `ans[::-1]` to reverse the order and get the itinerary in the correct sequence.
+
+### Example Walkthrough
+
+For example:
+```python
+tickets = [["MUC", "LHR"], ["JFK", "MUC"], ["SFO", "SJC"], ["LHR", "SFO"]]
+```
+
+1. **Sort and Build Graph**: The sorted tickets in reverse are:
+   ```python
+   graph = {
+     "JFK": ["MUC"],
+     "MUC": ["LHR"],
+     "LHR": ["SFO"],
+     "SFO": ["SJC"]
+   }
+   ```
+2. **DFS Traversal**: Starting from `"JFK"`, DFS will visit each destination in the lexicographical order.
+3. **Final Itinerary**: Reversing `ans` will yield the correct itinerary.
+
+### Complexity Analysis
+
+- **Time Complexity**: \(O(E \log E)\), where \(E\) is the number of tickets. Sorting the tickets takes \(O(E \log E)\), and DFS visits each edge once.
+- **Space Complexity**: \(O(V + E)\), where \(V\) is the number of locations and \(E\) is the number of tickets, to store the graph and the recursive call stack.
