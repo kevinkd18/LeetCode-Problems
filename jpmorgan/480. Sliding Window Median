@@ -1,0 +1,164 @@
+Let's go through this **Sliding Window Median** solution line by line. The code uses two heaps (`low` and `high`) to manage the sliding window and calculate the median efficiently.
+
+### Code Walkthrough
+
+```python
+import heapq
+from heapq import heappush, heappop
+from collections import defaultdict
+```
+- **`heapq`**: Provides methods to work with heaps in Python. Heaps will help us efficiently find the median.
+- **`defaultdict`**: A dictionary that provides a default value for non-existent keys. Used here to keep track of elements that need to be removed from the window.
+
+---
+
+```python
+class Solution:
+    def medianSlidingWindow(self, nums: list[int], k: int) -> list[float]:
+```
+- **Class Definition**: `Solution` class contains the method `medianSlidingWindow`.
+- **Function Definition**: `medianSlidingWindow` takes `nums` (the input array) and `k` (the window size) as parameters, returning a list of medians.
+
+---
+
+```python
+        def get_median():
+            if k % 2 == 1:
+                return -low[0]
+            else:
+                return (-low[0] + high[0]) / 2
+```
+- **`get_median` Function**: Calculates the median based on the state of the heaps:
+  - If `k` (window size) is odd, the median is the root of the max-heap `low`.
+  - If `k` is even, the median is the average of the largest element in `low` and the smallest element in `high`.
+
+---
+
+```python
+        low, high = [], []  # max-heap (low) and min-heap (high)
+        ans = []
+        to_remove = defaultdict(int)  # tracks elements to be lazily removed
+```
+- **`low` and `high`**: The two heaps used to store elements:
+  - `low` is a max-heap (implemented by storing negative values).
+  - `high` is a min-heap.
+- **`ans`**: The list that will store the result, i.e., the medians.
+- **`to_remove`**: A dictionary to keep track of elements marked for removal in the lazy deletion process.
+
+---
+
+### Initial Window Setup
+
+```python
+        for i in range(k):
+            heappush(low, -nums[i])
+```
+- **Add First k Elements**: Push the first `k` elements of `nums` to `low`. We use `-nums[i]` to simulate a max-heap.
+
+---
+
+```python
+        for _ in range(k // 2):
+            heappush(high, -heappop(low))
+```
+- **Balance Heaps for Initial Window**: Move half of the elements from `low` to `high` to ensure that `low` contains either the same number or one more element than `high`.
+
+---
+
+```python
+        ans.append(get_median())
+```
+- **Store First Median**: Calculate and store the median of the first window using `get_median`.
+
+---
+
+### Sliding the Window
+
+```python
+        for i in range(k, len(nums)):
+            balance = 0
+            out_num, in_num = nums[i - k], nums[i]
+```
+- **Sliding Variables**:
+  - `balance`: Tracks adjustments needed for the heaps to remain balanced.
+  - `out_num`: The element that will be removed from the window.
+  - `in_num`: The new element entering the window.
+
+---
+
+```python
+            to_remove[out_num] += 1
+            if out_num <= -low[0]:
+                balance -= 1
+            else:
+                balance += 1
+```
+- **Lazy Removal**: Increment the count of `out_num` in `to_remove`.
+- **Balance Adjustment**:
+  - If `out_num` is in `low` (<= max of `low`), it affects the balance by `-1`.
+  - Otherwise, `out_num` is in `high`, so `balance` increases by `1`.
+
+---
+
+```python
+            if in_num <= -low[0]:
+                heappush(low, -in_num)
+                balance += 1
+            else:
+                heappush(high, in_num)
+                balance -= 1
+```
+- **Adding New Element**:
+  - If `in_num` should be in `low`, push `-in_num` to `low` and adjust `balance` by `+1`.
+  - Otherwise, push `in_num` to `high`, adjusting `balance` by `-1`.
+
+---
+
+```python
+            if balance < 0:
+                heappush(low, -heappop(high))
+            if balance > 0:
+                heappush(high, -heappop(low))
+```
+- **Rebalancing Heaps**:
+  - If `balance < 0`, move the smallest element from `high` to `low`.
+  - If `balance > 0`, move the largest element from `low` to `high`.
+
+---
+
+```python
+            while low and to_remove[-low[0]] > 0:
+                to_remove[-low[0]] -= 1
+                heappop(low)
+            while high and to_remove[high[0]] > 0:
+                to_remove[high[0]] -= 1
+                heappop(high)
+```
+- **Lazy Deletion**:
+  - Check the top of `low` and `high` for any elements marked in `to_remove`.
+  - If an element is marked, decrement its count in `to_remove` and remove it from the heap.
+
+---
+
+```python
+            ans.append(get_median())
+```
+- **Store Median for Current Window**: After balancing and removing obsolete elements, calculate the current median and append it to `ans`.
+
+---
+
+### Final Output
+
+```python
+        return ans
+```
+- **Return Result**: Return the list `ans`, which contains the median for each window position.
+
+---
+
+### Explanation Summary
+
+The code maintains the median in a sliding window by:
+1. Using two heaps to dynamically keep the elements sorted within each window.
+2. Balancing the heaps after each slide to ensure `low` always has one more or equal number of elements than `high`.
+3. Implementing a lazy deletion process to handle elements that fall out of the sliding window efficiently.
