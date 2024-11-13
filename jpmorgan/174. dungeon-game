@@ -1,0 +1,83 @@
+Here's a detailed explanation of the `calculateMinimumHP` function, which solves the problem of finding the minimum initial health required to survive through a dungeon with potentially harmful and beneficial rooms.
+
+### Problem Summary
+You are given a grid (`dungeon`) representing rooms in a dungeon:
+- Each cell has a positive or negative integer.
+  - Positive values increase your health.
+  - Negative values decrease your health.
+- You start from the top-left corner and must reach the bottom-right corner.
+- Your health should never drop to zero or below at any point. Therefore, you need to calculate the minimum initial health (`calculateMinimumHP`) required to guarantee survival to the end.
+
+### Solution Approach
+
+The solution uses **dynamic programming** with a **1D DP array** to store the minimum health needed at each position, starting from the bottom-right corner and moving backward to the start.
+
+### Code Explanation
+
+```python
+class Solution:
+  def calculateMinimumHP(self, dungeon: list[list[int]]) -> int:
+```
+
+This defines the `calculateMinimumHP` function inside a `Solution` class. It takes `dungeon` as input, which is a 2D list representing the dungeon's rooms. The function returns an integer representing the minimum initial health required.
+
+```python
+    m = len(dungeon)
+    n = len(dungeon[0])
+```
+
+We calculate `m` (number of rows) and `n` (number of columns) in the `dungeon`.
+
+```python
+    dp = [math.inf] * (n + 1)
+    dp[n - 1] = 1
+```
+
+- `dp` is a 1D array with a length of `n + 1`, initialized to infinity (`math.inf`).
+  - This represents the minimum health required at each cell in the last row.
+- `dp[n - 1] = 1` sets the minimum health needed to survive in the bottom-right corner. Here, `1` means that we need at least 1 health point upon reaching this cell to stay alive.
+
+```python
+    for i in reversed(range(m)):
+      for j in reversed(range(n)):
+```
+
+We use nested loops to iterate through the dungeon grid starting from the bottom-right corner and moving backwards (from right to left and bottom to top). This direction allows us to calculate the minimum health required at each position based on future moves.
+
+```python
+        dp[j] = min(dp[j], dp[j + 1]) - dungeon[i][j]
+```
+
+- For each cell `(i, j)`, we compute the minimum health required to enter the cell from the right (`dp[j + 1]`) or from below (`dp[j]`) and then subtract the dungeon's value at `(i, j)` because:
+  - If `dungeon[i][j]` is negative, subtracting a negative value effectively increases the health needed.
+  - If `dungeon[i][j]` is positive, subtracting it reduces the required health.
+- `dp[j] = min(dp[j], dp[j + 1]) - dungeon[i][j]` takes the minimum of the two possible future states to get the minimum required health at `(i, j)`.
+
+```python
+        dp[j] = max(dp[j], 1)
+```
+
+- We ensure that the health required to survive at any cell is at least `1` since health cannot drop to zero or below.
+
+```python
+    return dp[0]
+```
+
+Finally, `dp[0]` will hold the minimum initial health required at the start of the dungeon, so we return it.
+
+### Example Walkthrough
+
+For example, let’s say:
+```python
+dungeon = [[-2, -3, 3],
+           [-5, -10, 1],
+           [10, 30, -5]]
+```
+
+1. We start from the bottom-right corner and fill in `dp` with values from that point backward.
+2. By the time we reach the top-left corner, `dp[0]` holds the minimum health required to ensure survival from the start.
+
+### Complexity Analysis
+
+- **Time Complexity:** \(O(m \times n)\), where \(m\) is the number of rows and \(n\) is the number of columns, due to iterating over every cell once.
+- **Space Complexity:** \(O(n)\), using a 1D array `dp` of length `n` to store health requirements.
