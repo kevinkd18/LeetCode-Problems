@@ -1,18 +1,12 @@
-class Solution {
- public:
-  int subarraySum(vector<int>& nums, int k) {
-    int ans = 0;
-    int prefix = 0;
-    unordered_map<int, int> count{{0, 1}};  // {prefix sum: count}
+class Solution:
+  def subarraySum(self, nums: list[int], k: int) -> int:
+    ans = 0
+    prefix = 0
+    count = collections.Counter({0: 1})
 
-    for (const int num : nums) {
-      prefix += num;
-      const int target = prefix - k;
-      if (const auto it = count.find(target); it != count.cend())
-        ans += it->second;
-      ++count[prefix];
-    }
+    for num in nums:
+      prefix += num
+      ans += count[prefix - k]
+      count[prefix] += 1
 
-    return ans;
-  }
-};
+    return ans
