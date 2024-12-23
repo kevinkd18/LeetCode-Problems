@@ -1,0 +1,49 @@
+from collections import deque
+
+class Solution:
+    def minimumOperations(self, root: TreeNode | None) -> int:
+        def min_swaps_to_sort(arr):
+            n = len(arr)
+            indexed_arr = list(enumerate(arr))
+            indexed_arr.sort(key=lambda x: x[1])  # Sort by values
+            visited = [False] * n
+            swaps = 0
+
+            for i in range(n):
+                if visited[i] or indexed_arr[i][0] == i:
+                    continue
+
+                # Find the cycle size
+                cycle_size = 0
+                j = i
+                while not visited[j]:
+                    visited[j] = True
+                    j = indexed_arr[j][0]
+                    cycle_size += 1
+
+                # Add the number of swaps for this cycle
+                if cycle_size > 1:
+                    swaps += cycle_size - 1
+
+            return swaps
+
+        if not root:
+            return 0
+
+        q = deque([root])
+        ans = 0
+
+        while q:
+            level_vals = []
+            for _ in range(len(q)):
+                node = q.popleft()
+                level_vals.append(node.val)
+                if node.left:
+                    q.append(node.left)
+                if node.right:
+                    q.append(node.right)
+
+            # Compute minimum swaps to sort this level
+            ans += min_swaps_to_sort(level_vals)
+
+        return ans
